@@ -1,0 +1,134 @@
+<p-table 
+#table 
+id="table"
+[value]="books" 
+[paginator]="true" 
+[rows]="10" 
+[rowsPerPageOptions]="[10,25,50]" 
+[loading]="loading"
+[globalFilterFields]="['title']"
+>
+    <ng-template pTemplate="caption">
+        <div class="flex justify-content-between">
+            <span class="p-input-icon-left p-ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [formControl]="searchInput" placeholder="Search keyword" />
+            </span>
+            <span class="flex gap-2">
+                <button 
+                type="button" 
+                pButton pRipple 
+                icon="pi pi-file-excel" 
+                (click)="exportExcel()" 
+                class="p-button-warning mr-2"  
+                pTooltip="XLS" 
+                tooltipPosition="bottom"
+                ></button>
+                <button 
+                type="button" 
+                pButton 
+                pRipple 
+                icon="pi pi-file-pdf" 
+                (click)="exportPdf()" 
+                class="p-button-warning mr-2" 
+                pTooltip="PDF" 
+                tooltipPosition="bottom"
+                ></button>
+            </span>
+            <span>
+                <button pButton (click)="addNewBook()" type="button" label="Add new book" class="p-button-success"></button>
+            </span>
+        </div>
+    </ng-template>
+    
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ID</th>
+            <th pSortableColumn="title">
+                Title 
+                <p-sortIcon field="title"></p-sortIcon></th>
+            <th pSortableColumn="pageCount">
+                Page Count
+                <p-sortIcon field="pageCount"></p-sortIcon>
+            </th>
+            <th pSortableColumn="publishDate">
+                Publish Date
+                <p-sortIcon field="publishDate"></p-sortIcon>
+            </th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-book>
+        <tr #tr (click)="tr.classList.toggle('selected')">
+            <td>{{book.id}}</td>
+            <td>{{book.title}}</td>
+            <td>{{book.pageCount}}</td>
+            <td>{{book.publishDate | date : 'short'}}</td>
+            <td>{{book.description}}</td>
+            <td>
+                <button 
+                pButton 
+                (click)="editBook(book)" 
+                pTooltip="Edit book" 
+                tooltipPosition="top" 
+                icon="pi pi-pencil" 
+                class="p-button-rounded"
+                ></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [header]="editForm.value.id ? 'Edit book' : 'Add new book'" [(visible)]="showModal">
+    <form [formGroup]="editForm" (ngSubmit)="saveBook()">
+        <div class="field col-12">
+            <label for="title">Title</label>
+            <input 
+            id="title" 
+            type="text" 
+            pInputText 
+            formControlName="title" 
+            class="inputfield w-full" 
+            [ngClass]="{'ng-invalid ng-dirty' : editForm.controls.title.errors && editForm.controls.title.touched}"
+            >
+        </div>
+        <div class="field col-12">
+            <label for="page-count">Page Count</label>
+            <input 
+            id="page-count" 
+            type="text" 
+            pInputText 
+            formControlName="pageCount" 
+            class="inputfield w-full" 
+            [ngClass]="{'ng-invalid ng-dirty' : editForm.controls.pageCount.errors && editForm.controls.pageCount.touched}"
+            >
+        </div>
+        <div class="field col-12">
+            <label for="publish-date">Publish Date</label>
+            <input 
+            id="publish-date" 
+            type="text" 
+            pInputText 
+            formControlName="publishDate" 
+            class="inputfield w-full" 
+            [ngClass]="{'ng-invalid ng-dirty' : editForm.controls.publishDate.errors && editForm.controls.publishDate.touched}"
+            >
+        </div>
+        <div class="field col-12">
+            <label for="description">Description</label>
+            <input 
+            id="description" 
+            type="text" 
+            pInputText 
+            formControlName="description" 
+            class="inputfield w-full" 
+            [ngClass]="{'ng-invalid ng-dirty' : editForm.controls.description.errors && editForm.controls.description.touched}"
+            >
+        </div>
+        <div class="flex justify-content-center gap-5">
+            <button pButton class="p-button-success">Save</button>
+            <button pButton class="p-button-danger ml-1" (click)="showModal = false">Cancel</button>
+        </div>
+    </form>
+</p-dialog>
